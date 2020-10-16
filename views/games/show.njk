@@ -16,17 +16,17 @@
       </div>
       <h1 class="col-12 col-md-9">{{game.name}}</h1>
     </div>
-    
+
     <p>
       available on
       {% for platform in game.platforms %}
-        {{platform.name}}
+        <a href="platforms/{{platform.slug}}">{{platform.name}}</a>
       {% endfor %}
     </p>
-    
+
     <p id="game-summary">{{game.summary}}</p>
   </div>
-  
+
   <h2>Screenshots</h2>
   {% if game.screenshots %}
     <div id="game-screenshots" class="carousel slide" data-ride="carousel">

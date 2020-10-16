@@ -11,6 +11,7 @@ import bodyParser from "body-parser";
 const clientWantsJson = (request: express.Request): boolean => request.get("accept") === "application/json";
 
 const jsonParser = bodyParser.json();
+const formParser = bodyParser.urlencoded({ extended: true });
 
 export function makeApp(db: Db): core.Express {
   const app = express();
@@ -29,9 +30,12 @@ export function makeApp(db: Db): core.Express {
   app.get("/", (_request, response) => response.render("pages/home"));
 
   app.get("/platforms", platformsController.index(platformModel));
+  app.get("/platforms/new", platformsController.newPlatform());
   app.get("/platforms/:slug", platformsController.show(platformModel));
-  app.post("/platforms", jsonParser, platformsController.create(platformModel));
+  app.get("/platforms/:slug/edit", platformsController.edit(platformModel));
+  app.post("/platforms", jsonParser, formParser, platformsController.create(platformModel));
   app.put("/platforms/:slug", jsonParser, platformsController.update(platformModel));
+  app.post("/platforms/:slug", formParser, platformsController.update(platformModel));
   app.delete("/platforms/:slug", jsonParser, platformsController.destroy(platformModel));
 
   app.get("/platforms/:slug/games", gamesController.list(gameModel));
@@ -42,6 +46,7 @@ export function makeApp(db: Db): core.Express {
   app.delete("/games/:slug", jsonParser, gamesController.destroy(gameModel));
 
   app.get("/*", (request, response) => {
+    console.log(request.path);
     if (clientWantsJson(request)) {
       response.status(404).json({ error: "Not Found" });
     } else {

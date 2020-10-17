@@ -1,4 +1,5 @@
 import { Collection, ObjectId } from "mongodb";
+import { Platform } from "./platformModel";
 
 export type GameInput = {
   code?: number;
@@ -60,13 +61,37 @@ export default class PlatformModel {
     return this.collection.find({ "platforms.slug": platformSlug }).toArray();
   }
 
-  async insertOne(payload: GameInput): Promise<Game> {
+  private addPlatforms(payload: GameInput, platforms: Platform[]): GameInput {
+    payload.platforms = platforms.map((platform) => {
+      return {
+        name: platform.name,
+        slug: platform.slug,
+        platform_logo: {
+          height: platform.platform_logo.height,
+          url: platform.platform_logo.url,
+          width: platform.platform_logo.width,
+        },
+      };
+    });
+
+    return payload;
+  }
+
+  async insertOne(payload: GameInput, platforms?: Platform[]): Promise<Game> {
+    if (platforms) {
+      this.addPlatforms(payload, platforms);
+    }
+
     const dbResponse = await this.collection.insertOne(payload);
     const { ops } = dbResponse;
     return ops[0];
   }
 
-  async updateOne(id: ObjectId, payload: Game): Promise<Game> {
+  async updateOne(id: ObjectId, payload: Game, platforms?: Platform[]): Promise<Game> {
+    if (platforms) {
+      this.addPlatforms(payload, platforms);
+    }
+
     const dbResponse = await this.collection.replaceOne({ _id: id }, payload);
     const { ops } = dbResponse;
     return ops[0];

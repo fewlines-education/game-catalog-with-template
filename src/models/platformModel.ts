@@ -1,4 +1,6 @@
 import { Collection, ObjectId } from "mongodb";
+import platforms from "../../data/platforms";
+import { Game } from "./gameModel";
 
 type PlatformInput = {
   code?: number;
@@ -6,7 +8,7 @@ type PlatformInput = {
   cpu?: string;
   games?: {
     cover: {
-      thumbnail: string;
+      thumbnail?: string;
       url: string;
     };
     name: string;
@@ -77,6 +79,23 @@ export default class PlatformModel {
 
   async remove(id: ObjectId): Promise<void> {
     await this.collection.deleteOne({ _id: id });
+  }
+
+  async addGame(platform: Platform, game: Game): Promise<Platform> {
+    if (platform.games && platform.games.find((g) => g.slug === game.slug)) {
+      return platform;
+    }
+    if (!platform.games) {
+      platform.games = [];
+    }
+    platform.games.push({
+      slug: game.slug,
+      name: game.name,
+      cover: {
+        url: game.cover.url,
+      },
+    });
+    return this.updateOne(platform._id, platform);
   }
 
   validate(payload: Record<string, unknown>): string[] {

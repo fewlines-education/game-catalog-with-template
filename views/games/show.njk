@@ -9,18 +9,22 @@
 {% endblock %}
 
 {% block content %}
-  <div class="card" id="game-main">
+  <div class="card p-5 mb-5 mt-5" id="game-main">
     <div class="row">
-      <div class="col-12 col-md-3">
+      <div class="col-4 col-md-3">
         <img src="{{game.cover.url}}" alt="{{game.name}} cover">
       </div>
-      <h1 class="col-12 col-md-9">{{game.name}}</h1>
+      <div class="col-8 row justify-content-center align-items-center">
+
+        <h1 class="col-12 col-md-9">{{game.name}}</h1>
+        <a href="/games/{{game.slug}}/edit" class="btn btn-success ml-5">Edit</a>
+      </div>
     </div>
 
     <p>
       available on
       {% for platform in game.platforms %}
-        <a href="platforms/{{platform.slug}}">{{platform.name}}</a>
+        <a href="/platforms/{{platform.slug}}">{{platform.name}}</a>
       {% endfor %}
     </p>
 

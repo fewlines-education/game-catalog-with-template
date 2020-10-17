@@ -28,6 +28,7 @@ export function makeApp(db: Db): core.Express {
   const gameModel = new GameModel(db.collection<Game>("games"));
 
   app.get("/", (_request, response) => response.render("pages/home"));
+  app.get("/api", (_request, response) => response.render("pages/api"));
 
   app.get("/platforms", platformsController.index(platformModel));
   app.get("/platforms/new", platformsController.newPlatform());
@@ -40,9 +41,12 @@ export function makeApp(db: Db): core.Express {
 
   app.get("/platforms/:slug/games", gamesController.list(gameModel));
   app.get("/games", gamesController.index(gameModel));
+  app.get("/games/new", gamesController.newGame());
   app.get("/games/:slug", gamesController.show(gameModel));
-  app.post("/games", jsonParser, gamesController.create(gameModel, platformModel));
-  app.put("/games/:slug", jsonParser, gamesController.update(gameModel));
+  app.get("/games/:slug/edit", gamesController.edit(gameModel));
+  app.post("/games", jsonParser, formParser, gamesController.create(gameModel, platformModel));
+  app.put("/games/:slug", jsonParser, gamesController.update(gameModel, platformModel));
+  app.post("/games/:slug", formParser, gamesController.update(gameModel, platformModel));
   app.delete("/games/:slug", jsonParser, gamesController.destroy(gameModel));
 
   app.get("/*", (request, response) => {

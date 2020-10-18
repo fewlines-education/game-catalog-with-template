@@ -1,20 +1,43 @@
-import { Db } from "mongodb";
+import { MongoClient } from "mongodb";
 import * as core from "express-serve-static-core";
-import express from "express";
-import * as gamesController from "./controllers/games.controller";
 import * as nunjucks from "nunjucks";
+import bodyParser from "body-parser";
+import express from "express";
+import mongoSession from "connect-mongo";
+import OAuth2Client from "@fwl/oauth2";
+import session from "express-session";
+import * as gamesController from "./controllers/games.controller";
+import * as oauthController from "./controllers/oauth.controller";
 import * as platformsController from "./controllers/platforms.controller";
 import GameModel, { Game } from "./models/gameModel";
 import PlatformModel, { Platform } from "./models/platformModel";
-import bodyParser from "body-parser";
+import UserModel, { User } from "./models/userModel";
 
 const clientWantsJson = (request: express.Request): boolean => request.get("accept") === "application/json";
 
 const jsonParser = bodyParser.json();
 const formParser = bodyParser.urlencoded({ extended: true });
 
-export function makeApp(db: Db): core.Express {
+export function makeApp(mongoClient: MongoClient, oauthClient: OAuth2Client): core.Express {
   const app = express();
+
+  const mongoStore = mongoSession(session);
+  if (process.env.NODE_ENV === "production") {
+    app.set("trust proxy", 1);
+  }
+  const sessionParser = session({
+    secret: "this_should_be_a_long_string_with_more_than_32_characters_also_known_as_keyboard_cat",
+    name: "sessionId",
+    resave: false,
+    saveUninitialized: true,
+    store: new mongoStore({
+      client: mongoClient,
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      expires: new Date(Date.now() + 3600000),
+    },
+  });
 
   nunjucks.configure("views", {
     autoescape: true,
@@ -24,11 +47,23 @@ export function makeApp(db: Db): core.Express {
   app.use("/assets", express.static("public"));
   app.set("view engine", "njk");
 
-  const platformModel = new PlatformModel(db.collection<Platform>("platforms"));
-  const gameModel = new GameModel(db.collection<Game>("games"));
+  const platformModel = new PlatformModel(mongoClient.db().collection<Platform>("platforms"));
+  const gameModel = new GameModel(mongoClient.db().collection<Game>("games"));
+  const userModel = new UserModel(mongoClient.db().collection<User>("users"));
 
-  app.get("/", (_request, response) => response.render("pages/home"));
+  app.get("/", sessionParser, (request, response) => {
+    let isLogguedIn = false;
+    console.log({ session: request.session, at: request?.session?.accessToken });
+    if (request.session && request.session.accessToken) {
+      isLogguedIn = true;
+    }
+    response.render("pages/home", { isLogguedIn });
+  });
   app.get("/api", (_request, response) => response.render("pages/api"));
+
+  app.get("/api/oauth/login", oauthController.index(oauthClient));
+  app.get("/api/oauth/callback", sessionParser, oauthController.callback(oauthClient, userModel));
+  app.get("/logout", sessionParser, oauthController.logout());
 
   app.get("/platforms", platformsController.index(platformModel));
   app.get("/platforms/new", platformsController.newPlatform());

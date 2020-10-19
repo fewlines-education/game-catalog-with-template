@@ -7,6 +7,7 @@ import * as platformsController from "./controllers/platforms.controller";
 import GameModel, { Game } from "./models/gameModel";
 import PlatformModel, { Platform } from "./models/platformModel";
 import bodyParser from "body-parser";
+import cors from "cors";
 
 const clientWantsJson = (request: express.Request): boolean => request.get("accept") === "application/json";
 
@@ -23,6 +24,7 @@ export function makeApp(db: Db): core.Express {
 
   app.use("/assets", express.static("public"));
   app.set("view engine", "njk");
+  app.use(cors());
 
   const platformModel = new PlatformModel(db.collection<Platform>("platforms"));
   const gameModel = new GameModel(db.collection<Game>("games"));

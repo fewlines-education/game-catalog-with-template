@@ -25,7 +25,7 @@ jobs:
         CONNECT_APPLICATION_CLIENT_SECRET: ${{ secrets.CONNECT_APPLICATION_CLIENT_SECRET }}
 
     - name: test-e2e
-      run: docker run -it -e URL="http://localhost:8080" --network="host" -v $(pwd)/tests:/app/tests fewlines/taiko:0.1.0 yarn jest
+      run: docker run -it -e URL="http://localhost:8080" -t --network="host" -v $(pwd)/tests:/app/tests fewlines/taiko:0.1.0 yarn jest
     
     - name: docker-compose-stop
       run: docker-compose stop

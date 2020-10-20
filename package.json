@@ -10,8 +10,7 @@
     "test": "eslint --ext .js,.ts . && jest",
     "db:seed": "ts-node commands/db.seed.ts",
     "db:drop": "ts-node commands/db.drop.ts",
-    "db:reset": "yarn db:drop && yarn db:seed",
-    "docker": "bash ./start.sh"
+    "db:reset": "yarn db:drop && yarn db:seed"
   },
   "dependencies": {
     "@fwl/oauth2": "^0.1.3",

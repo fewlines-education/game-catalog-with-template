@@ -1,4 +1,4 @@
-import { openBrowser, closeBrowser, goto, text, click, write, press, screenshot, waitFor } from "taiko";
+import { openBrowser, closeBrowser, goto, text, click, waitFor } from "taiko";
 
 describe("Account Web Application show identity", () => {
   jest.setTimeout(20000);

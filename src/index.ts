@@ -10,8 +10,8 @@ const oauthClient = new OAuth2Client({
   clientID: process.env.CONNECT_APPLICATION_CLIENT_ID || "",
   clientSecret: process.env.CONNECT_APPLICATION_CLIENT_SECRET || "",
   redirectURI: process.env.CONNECT_REDIRECT_URI || "",
-  audience: "connect-account",
-  scopes: ["email"],
+  audience: process.env.CONNECT_AUDIENCE || "",
+  scopes: (process.env.CONNECT_APPLICATION_SCOPES || "").split(" "),
 });
 
 initDb()

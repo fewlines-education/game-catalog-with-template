@@ -53,7 +53,6 @@ export function makeApp(mongoClient: MongoClient, oauthClient: OAuth2Client): co
 
   app.get("/", sessionParser, (request, response) => {
     let isLogguedIn = false;
-    console.log({ session: request.session, at: request?.session?.accessToken });
     if (request.session && request.session.accessToken) {
       isLogguedIn = true;
     }
@@ -61,8 +60,8 @@ export function makeApp(mongoClient: MongoClient, oauthClient: OAuth2Client): co
   });
   app.get("/api", (_request, response) => response.render("pages/api"));
 
-  app.get("/api/oauth/login", oauthController.index(oauthClient));
-  app.get("/api/oauth/callback", sessionParser, oauthController.callback(oauthClient, userModel));
+  app.get("/oauth/login", oauthController.index(oauthClient));
+  app.get("/oauth/callback", sessionParser, oauthController.callback(oauthClient, userModel));
   app.get("/logout", sessionParser, oauthController.logout());
 
   app.get("/platforms", platformsController.index(platformModel));

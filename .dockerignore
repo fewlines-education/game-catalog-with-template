@@ -1,0 +1,14 @@
+**
+
+!src
+!dist
+!data
+!commands
+!views
+!utils
+!public
+!package.json
+!package.json
+!tsconfig.json
+!yarn.lock
+!start.sh

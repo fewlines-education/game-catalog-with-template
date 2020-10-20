@@ -1,0 +1,19 @@
+version: "2.1"
+services:
+  game-catalog:
+    image: game-catalog
+    environment:
+      PORT: 8080
+      MONGODB_URI: ${MONGODB_URI}
+      CONNECT_APPLICATION_CLIENT_ID: ${CONNECT_APPLICATION_CLIENT_ID}
+      CONNECT_APPLICATION_CLIENT_SECRET: ${CONNECT_APPLICATION_CLIENT_SECRET}
+      CONNECT_APPLICATION_SCOPES: "email phone openid"
+      CONNECT_OPEN_ID_CONFIGURATION_URL: http://fewlines.connect.prod.fewlines.tech/.well-known/openid-configuration
+      CONNECT_REDIRECT_URI: http://game-catalog:8080/oauth/callback
+      CONNECT_JWT_ALGORITHM: RS256
+  taiko:
+    image: fewlines/taiko:0.1.0
+    environment:
+      URL: "http://game-catalog:8080"
+    volumes:
+      - ./tests:/app/tests

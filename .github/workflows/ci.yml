@@ -13,9 +13,6 @@ jobs:
     - name: build-image
       run: docker build -t game-catalog .
 
-    - name: docker-compose-up
-      run: docker-compose up -d
-
     - name: create env file
       run: echo "MONGODB_URI=${MONGODB_URI}\nCONNECT_APPLICATION_CLIENT_ID=${CONNECT_APPLICATION_CLIENT_ID}\nCONNECT_APPLICATION_CLIENT_SECRET=${CONNECT_APPLICATION_CLIENT_SECRET}" > .env
       env:
@@ -23,8 +20,13 @@ jobs:
         CONNECT_APPLICATION_CLIENT_ID: ${{ secrets.CONNECT_APPLICATION_CLIENT_ID }}
         CONNECT_APPLICATION_CLIENT_SECRET: ${{ secrets.CONNECT_APPLICATION_CLIENT_SECRET }}
 
-    - name: test-e2e
-      run: docker run -e URL="http://game-catalog:8080" --network="game-catalog-with-template_default" -v $(pwd)/tests:/app/tests fewlines/taiko:0.1.0 yarn jest
+    - name: docker-compose-up
+      run: docker-compose up -d --scale taiko=0
+
+    # - name: test-e2e
+    #   run: docker run -e URL="http://game-catalog:8080" --network="game-catalog-with-template_default" -v $(pwd)/tests:/app/tests fewlines/taiko:0.1.0 yarn jest
+    - name: run tests
+      run: docker-compose run taiko yarn jest
     
     - name: docker-compose-stop
       run: docker-compose stop

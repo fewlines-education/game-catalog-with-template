@@ -14,10 +14,9 @@ services:
       CONNECT_AUDIENCE: fenn
     ports:
       - 8080:8080
-  # taiko:
-  #   image: fewlines/taiko:0.1.0
-  #   environment:
-  #     URL: "http://game-catalog:8080"
-  #   volumes:
-  #     - ./tests:/app/tests
-  #   command: yarn jest
+  taiko:
+    image: fewlines/taiko:0.1.0
+    environment:
+      URL: "http://game-catalog:8080"
+    volumes:
+      - ./tests:/app/tests

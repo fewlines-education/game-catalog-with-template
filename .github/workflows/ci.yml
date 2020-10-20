@@ -14,7 +14,7 @@ jobs:
       run: docker build -t game-catalog .
 
     - name: test-e2e
-      run: docker-compose up -d && docker-compose exec taiko yarn jest
+      run: docker-compose up -d && COMPOSE_INTERACTIVE_NO_CLI=1 docker-compose exec taiko yarn jest
       env:
         MONGODB_URI: ${{ secrets.MONGODB_URI }}
         CONNECT_APPLICATION_CLIENT_ID: ${{ secrets.CONNECT_APPLICATION_CLIENT_ID }}

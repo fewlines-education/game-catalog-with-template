@@ -11,6 +11,7 @@ services:
       CONNECT_OPEN_ID_CONFIGURATION_URL: http://fewlines.connect.prod.fewlines.tech/.well-known/openid-configuration
       CONNECT_REDIRECT_URI: http://game-catalog:8080/oauth/callback
       CONNECT_JWT_ALGORITHM: RS256
+      CONNECT_AUDIENCE: fenn
   taiko:
     image: fewlines/taiko:0.1.0
     environment:

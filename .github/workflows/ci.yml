@@ -21,7 +21,7 @@ jobs:
         CONNECT_APPLICATION_CLIENT_SECRET: ${{ secrets.CONNECT_APPLICATION_CLIENT_SECRET }}
 
     - name: docker-compose-up
-      run: docker-compose up
+      run: docker-compose up -d
 
     - name: debug
       run: docker-compose ps

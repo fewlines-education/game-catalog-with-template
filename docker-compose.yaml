@@ -12,9 +12,12 @@ services:
       CONNECT_REDIRECT_URI: http://game-catalog:8080/oauth/callback
       CONNECT_JWT_ALGORITHM: RS256
       CONNECT_AUDIENCE: fenn
-  taiko:
-    image: fewlines/taiko:0.1.0
-    environment:
-      URL: "http://game-catalog:8080"
-    volumes:
-      - ./tests:/app/tests
+    ports:
+      - 8080:8080
+  # taiko:
+  #   image: fewlines/taiko:0.1.0
+  #   environment:
+  #     URL: "http://game-catalog:8080"
+  #   volumes:
+  #     - ./tests:/app/tests
+  #   command: yarn jest

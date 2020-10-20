@@ -10,30 +10,26 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # - name: build-image
-    #   run: docker build -t game-catalog .
+    - name: build-image
+      run: docker build -t game-catalog .
 
     - name: create env file
-      run: echo "MONGODB_URI=${MONGODB_URI}\nCONNECT_APPLICATION_CLIENT_ID=${CONNECT_APPLICATION_CLIENT_ID}\nCONNECT_APPLICATION_CLIENT_SECRET=${CONNECT_APPLICATION_CLIENT_SECRET}" > .env
+      run: echo -e "MONGODB_URI=${MONGODB_URI}\nCONNECT_APPLICATION_CLIENT_ID=${CONNECT_APPLICATION_CLIENT_ID}\nCONNECT_APPLICATION_CLIENT_SECRET=${CONNECT_APPLICATION_CLIENT_SECRET}" > .env
       env:
-        MONGODB_URI: "plop"
-        # MONGODB_URI: ${{ secrets.MONGODB_URI }}
-        # CONNECT_APPLICATION_CLIENT_ID: ${{ secrets.CONNECT_APPLICATION_CLIENT_ID }}
-        # CONNECT_APPLICATION_CLIENT_SECRET: ${{ secrets.CONNECT_APPLICATION_CLIENT_SECRET }}
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        CONNECT_APPLICATION_CLIENT_ID: ${{ secrets.CONNECT_APPLICATION_CLIENT_ID }}
+        CONNECT_APPLICATION_CLIENT_SECRET: ${{ secrets.CONNECT_APPLICATION_CLIENT_SECRET }}
+
+    - name: docker-compose-up
+      run: docker-compose up
 
     - name: debug
-      run: cat .env
+      run: docker-compose ps
 
-    # - name: docker-compose-up
-    #   run: docker-compose up
-
-    # - name: debug
-    #   run: docker-compose ps
-
-    # # - name: test-e2e
-    # #   run: docker run -e URL="http://game-catalog:8080" --network="game-catalog-with-template_default" -v $(pwd)/tests:/app/tests fewlines/taiko:0.1.0 yarn jest
-    # - name: run tests
-    #   run: docker-compose run taiko yarn jest
+    # - name: test-e2e
+    #   run: docker run -e URL="http://game-catalog:8080" --network="game-catalog-with-template_default" -v $(pwd)/tests:/app/tests fewlines/taiko:0.1.0 yarn jest
+    - name: run tests
+      run: docker-compose run taiko yarn jest
     
-    # - name: docker-compose-stop
-    #   run: docker-compose stop
+    - name: docker-compose-stop
+      run: docker-compose stop

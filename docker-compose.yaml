@@ -20,3 +20,7 @@ services:
       URL: "http://game-catalog:8080"
     volumes:
       - ./tests:/app/tests
+    scale: 0
+    depends_on:
+      game-catalog:
+       condition: service_healthy 

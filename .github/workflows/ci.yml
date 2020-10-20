@@ -21,7 +21,10 @@ jobs:
         CONNECT_APPLICATION_CLIENT_SECRET: ${{ secrets.CONNECT_APPLICATION_CLIENT_SECRET }}
 
     - name: docker-compose-up
-      run: docker-compose up -d --scale taiko=0
+      run: docker-compose up -d
+
+    - name: debug
+      run: docker-compose ps
 
     # - name: test-e2e
     #   run: docker run -e URL="http://game-catalog:8080" --network="game-catalog-with-template_default" -v $(pwd)/tests:/app/tests fewlines/taiko:0.1.0 yarn jest

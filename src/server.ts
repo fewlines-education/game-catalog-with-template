@@ -12,6 +12,7 @@ import * as platformsController from "./controllers/platforms.controller";
 import GameModel, { Game } from "./models/gameModel";
 import PlatformModel, { Platform } from "./models/platformModel";
 import UserModel, { User } from "./models/userModel";
+import { Request, Response } from "express";
 
 const clientWantsJson = (request: express.Request): boolean => request.get("accept") === "application/json";
 
@@ -53,12 +54,20 @@ export function makeApp(mongoClient: MongoClient, oauthClient: OAuth2Client): co
 
   app.get("/", sessionParser, (request, response) => {
     let isLogguedIn = false;
-    if (request.session && request.session.accessToken) {
+    if (!request.session || !request.session.accessToken) {
       isLogguedIn = true;
     }
     response.render("pages/home", { isLogguedIn });
   });
   app.get("/api", (_request, response) => response.render("pages/api"));
+
+  app.get("/login", async (request: Request, response: Response) => {
+    const url = await oauthClient.getAuthorizationURL();
+    const stringifiedUrl = url.toString();
+    console.log(stringifiedUrl);
+
+    response.redirect(stringifiedUrl);
+  });
 
   app.get("/oauth/login", oauthController.index(oauthClient));
   app.get("/oauth/callback", sessionParser, oauthController.callback(oauthClient, userModel));

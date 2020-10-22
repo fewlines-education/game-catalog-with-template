@@ -1,13 +1,19 @@
-import { openBrowser, closeBrowser, goto, text, click, waitFor } from "taiko";
+import { openBrowser, closeBrowser, scrollDown, goto, link, text, click, waitFor } from "taiko";
 
 describe("Account Web Application show identity", () => {
   jest.setTimeout(20000);
 
   beforeAll(async () => {
-    const browserConfig =
-      "--disable-gpu --disable-dev-shm-usage --disable-setuid-sandbox --no-first-run --no-sandbox --no-zygote";
     await openBrowser({
-      args: ["--window-size=1280,800", ...browserConfig.split(" ")],
+      args: [
+        "--window-size=1280,800",
+        "--disable-gpu",
+        "--disable-dev-shm-usage",
+        "--disable-setuid-sandbox",
+        "--no-first-run",
+        "--no-sandbox",
+        "--no-zygote",
+      ],
       headless: true,
     });
   });
@@ -22,10 +28,14 @@ describe("Account Web Application show identity", () => {
     const website = process.env.URL || "";
     await goto(website);
     await waitFor("Video Games Database");
-    expect(await text("Video Games Database").exists()).toBeTruthy();
+    expect(await text("Video Games Database").exists()).toBe(true);
 
-    await click("Games");
-    await waitFor("Fable II");
-    expect(await text("Fable II").exists()).toBeTruthy();
+    await click(link("platforms"));
+    await waitFor("Xbox 360");
+    await scrollDown("View Games");
+    click(link("View Games"));
+
+    await waitFor("The PlayStation 4 system opens the door");
+    expect(await text("The PlayStation 4 system opens the door").exists()).toBeTruthy();
   });
 });

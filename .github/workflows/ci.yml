@@ -23,11 +23,6 @@ jobs:
     - name: docker-compose-up
       run: docker-compose up -d
 
-    - name: debug
-      run: docker-compose ps
-
-    # - name: test-e2e
-    #   run: docker run -e URL="http://game-catalog:8080" --network="game-catalog-with-template_default" -v $(pwd)/tests:/app/tests fewlines/taiko:0.1.0 yarn jest
     - name: run tests
       run: docker-compose run taiko yarn jest
     

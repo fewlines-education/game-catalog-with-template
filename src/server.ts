@@ -1,17 +1,20 @@
 import { Db } from "mongodb";
 import * as core from "express-serve-static-core";
 import * as dotenv from "dotenv";
-import * as express from "express";
+import express from "express";
 import * as gamesController from "./controllers/games.controller";
 import * as nunjucks from "nunjucks";
 import * as platformsController from "./controllers/platforms.controller";
 import GameModel, { Game } from "./models/gameModel";
 import initDb from "../utils/initDatabase";
 import PlatformModel, { Platform } from "./models/platformModel";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors());
 
 app.use("/assets", express.static("public"));
 
